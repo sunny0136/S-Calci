@@ -14,22 +14,30 @@ document.addEventListener('keypress', ( e ) => {
         result.textContent += key - 48;
     }
     if (e.code === "NumpadAdd" || e.code === "NumpadDivide" || e.code === "NumpadSubtract" || e.code === "NumpadMultiply" || e.code === "NumpadDecimal") {
-        console.log(isNaN(result.textContent += e.key));
+        isNaN(result.textContent += e.key);
     }
     if (e.code === "NumpadEnter") {
         result.innerText = eval(result.innerText);
         live_result.innerText = eval(result.innerText);
     }
-    document.onkeyup = function(event) {
+    document.onkeydown = function(event) {
         if (event.code == "Backspace") {
             result.innerText = result.innerText.substr(0, result.textContent.length-1);
     }
     };
   }, false);
+  function evaluateInnerText(result) {
+    try {
+      return (new Function(result.innerText))();
+    } catch (e) {
+      console.error("Failed to execute code:", e);
+      return undefined;
+    }
+  }
 function calculate(){
     let text = this.innerText;
-    var lastChar = result.innerText.charAt( result.innerText.length -1 );
-
+    // var find_percentage = result.innerText.charAt( result.innerText.length -1 );
+    console.log(live_result.innerText)
     // Validation
     if( text !== "←" && isNaN( text ) && isNaN( result.innerText.charAt( result.innerText.length - 1 ) ) ) {
         result.innerText = result.innerText.slice( 0, -1 );
@@ -42,10 +50,14 @@ function calculate(){
     }else if(text === "←"){
         result.innerText = result.innerText.substr(0, result.textContent.length-1);
     }else if(text === "="){
+        live_result.innerText = evaluateInnerText(result);
+
         result.innerText = eval(result.innerText);
         live_result.innerText = eval(result.innerText);
-    }else if(text === "%" && lastChar){
-        alert(result.innerText = result.innerText.slice( 0, -1 ) * 0.01);
+    }else if(text === "%"){
+        result.textContent += "*0.01";
+        return;
+
 
     }  else {
         result.textContent += text;
